@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title%} Tienda de Ropa {% endblock %}
+{% block content%}
+<div class="columns">
+    <div class="column is-offset-3 is-6">
+        <a href="{{ url_for('add_product') }}" class="button is-success">
+            <i class="fa-solid fa-plus"></i> &nbsp; Agregar Producto
+        </a>
+        <br><br>
+        
+        {% for producto in productos %}
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <p class="title is-4">{{ producto.nombre }}</p>
+                        <p class="subtitle is-5">{{ producto.categoria.nombre }}</p>
+                    </div>
+                </div>
+                <div class="content">
+                    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                    <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                    <p><strong>Talla:</strong> {{ producto.talla }}</p>
+                    <p><strong>Color:</strong> {{ producto.color }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock%}
