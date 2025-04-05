@@ -6,15 +6,31 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </head>
-  <body >
+  </head>
+  <body>
     <header>
-        <br>
-        <h1 class="title has-text-centered is-1">Tienda de Ropa</h1>
-        <hr>
+      <br>
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+            <!-- Aquí puedes poner tu logo, reemplaza 'logo.png' por la ruta correcta de tu imagen -->
+            <img src="logo.png" alt="Logo" width="40" height="40">
+          </a>
+        </div>
+        <div class="navbar-menu">
+          <div class="navbar-end">
+            <a href="/" class="navbar-item">Inicio</a>
+            <a href="/productos" class="navbar-item">Productos</a>
+            <a href="/contacto" class="navbar-item">Contacto</a>
+          </div>
+        </div>
+      </nav>
+      <h1 class="title has-text-centered is-1">Tienda de Ropa</h1>
+      <h2 class="subtitle has-text-centered is-4">Las mejores prendas a tu alcance</h2>
+      <hr>
     </header>
     <div class="container">
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </div>
   </body>
 </html>
