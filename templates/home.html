@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Inicio - FashionStore{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Descubre la nueva colección</h1>
+        <p class="lead mb-5">Moda de calidad a precios increíbles</p>
+        <a href="{{ url_for('listar_productos') }}" class="btn btn-light btn-lg px-4">
+            Ver productos <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<div class="container">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded-3 h-100">
+                <div class="feature-icon">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <h3>Envío Rápido</h3>
+                <p>Recibe tus productos en 24-48 horas con nuestro servicio premium.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded-3 h-100">
+                <div class="feature-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <h3>Devoluciones Fáciles</h3>
+                <p>30 días para devoluciones sin complicaciones.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded-3 h-100">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>Pago Seguro</h3>
+                <p>Protegemos tus datos con encriptación de última generación.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard de Administración -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Panel de Administración</h2>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-tshirt fs-1 text-primary mb-3"></i>
+                    <h3 class="card-title">Administrar Productos</h3>
+                    <p class="card-text">Gestiona el inventario de productos de la tienda.</p>
+                    <a href="{{ url_for('listar_productos') }}" class="btn btn-primary">
+                        Acceder <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-tags fs-1 text-primary mb-3"></i>
+                    <h3 class="card-title">Administrar Categorías</h3>
+                    <p class="card-text">Organiza los productos por categorías y colecciones.</p>
+                    <a href="{{ url_for('listar_categorias') }}" class="btn btn-primary">
+                        Acceder <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
