@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV 'C:\Users\efren\OneDrive\Documentos\tiendaderopa\venv'
+set -gx VIRTUAL_ENV 'C:\Users\efren\OneDrive\Documentos\GitHub\tiendaderopa\venv'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"Scripts $PATH
