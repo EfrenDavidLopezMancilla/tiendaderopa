@@ -1,75 +1,200 @@
 {% extends 'base.html' %}
-{% block title %} Tienda de Ropa {% endblock %}
+
 {% block content %}
-<div class="columns">
-    <div class="column is-offset-3 is-6">
-        <a href="{{ url_for('add_product') }}" class="button is-success">
-            <i class="fa-solid fa-plus"></i> &nbsp; Agregar Producto
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-gradient"><i class="bi bi-grid me-2"></i>Tienda De Ropa</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('create_producto') }}" class="btn btn-primary-gradient">
+            <i class="bi bi-plus-circle me-1"></i> Nuevo Producto
         </a>
-        <br><br>
-
-        {% for producto in productos %}
-        <div class="card">
-            <div class="card-content">
-                <div class="media">
-                    <div class="media-content">
-                        <p class="title is-4">{{ producto.nombre }}</p>
-                        <p class="subtitle is-5">{{ producto.categoria.nombre }}</p>
-                    </div>
-                </div>
-                <div class="content">
-                    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
-                    <p><strong>Precio:</strong> ${{ producto.precio }}</p>
-                    <p><strong>Talla:</strong> {{ producto.talla }}</p>
-                    <p><strong>Color:</strong> {{ producto.color }}</p>
-                </div>
-
-                <!-- Botones -->
-                <div class="buttons is-right mt-3">
-                    <a href="{{ url_for('update_product', id=producto.id) }}" class="button is-small is-link is-outlined">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-                    <button class="button is-small is-danger is-outlined" onclick="openModal('modal-{{ producto.id }}')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal mejorado -->
-        <div class="modal" id="modal-{{ producto.id }}">
-            <div class="modal-background" onclick="closeModal('modal-{{ producto.id }}')"></div>
-            <div class="modal-card">
-                <header class="modal-card-head has-background-danger">
-                    <p class="modal-card-title has-text-white">Confirmar eliminación</p>
-                    <button class="delete" aria-label="close" onclick="closeModal('modal-{{ producto.id }}')"></button>
-                </header>
-                <section class="modal-card-body">
-                    <p>¿Estás seguro de que deseas eliminar el producto <strong>{{ producto.nombre }}</strong>?</p>
-                    
-                    {% if producto.imagen %}
-                    <figure class="image is-128x128 mt-3">
-                        <img src="{{ producto.imagen }}" alt="Imagen de {{ producto.nombre }}">
-                    </figure>
-                    {% endif %}
-                </section>
-                <footer class="modal-card-foot is-justify-content-flex-end">
-                    <button class="button" onclick="closeModal('modal-{{ producto.id }}')">Cancelar</button>
-                    <a href="{{ url_for('delete_product', id=producto.id) }}" class="button is-danger">Eliminar</a>
-                </footer>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 
-<!-- Script para manejar los modales -->
+<div class="card shadow-lg mb-4 border-0">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-gradient-dark">
+        <h6 class="m-0 font-weight-bold text-white">
+            <i class="bi bi-box-seam me-2"></i>Listado de Ropa
+        </h6>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-orange text-dark me-3">
+                <i class="bi bi-list-ol me-1"></i>Mostrando 10 registros
+            </span>
+        </div>
+    </div>
+    <div class="card-body bg-soft-white">
+        <div class="table-responsive">
+            <table id="productosTable" class="table table-hover table-bordered-rounded" style="width:100%">
+                <thead class="bg-gradient-primary text-white">
+                    <tr>
+                        <th class="text-center"><i class="bi bi-hash me-1"></i>ID</th>
+                        <th><i class="bi bi-tag me-1"></i>Nombre</th>
+                        <th><i class="bi bi-card-text me-1"></i>Descripción</th>
+                        <th class="text-center"><i class="bi bi-currency-dollar me-1"></i>Precio</th>
+                        <th class="text-center"><i class="bi bi-rulers me-1"></i>Talla</th>
+                        <th class="text-center"><i class="bi bi-palette me-1"></i>Color</th>
+                        <th><i class="bi bi-tags me-1"></i>Categoría</th>
+                        <th class="text-center"><i class="bi bi-gear me-1"></i>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr class="align-middle">
+                        <td class="text-center bg-soft-blue text-dark fw-bold">{{ producto.id }}</td>
+                        <td class="bg-soft-purple">
+                            <span class="text-dark">{{ producto.nombre }}</span>
+                        </td>
+                        <td class="bg-soft-cyan">
+                            <span class="text-dark">{{ producto.descripcion|truncate(30) }}</span>
+                        </td>
+                        <td class="text-center bg-soft-green text-dark fw-bold">
+                            ${{ "%.2f"|format(producto.precio) }}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-orange text-dark p-2 fs-6 rounded-pill">
+                                {{ producto.talla if producto.talla else 'N/A' }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge p-2 fs-6 rounded-pill" 
+                                  style="background-color: {% if producto.color %}{{ producto.color }}{% else %}#e9ecef{% endif %}; 
+                                         color: black;
+                                         border: 2px solid white;
+                                         box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <i class="bi bi-circle-fill me-1"></i>{{ producto.color if producto.color else 'N/A' }}
+                            </span>
+                        </td>
+                        <td class="bg-soft-pink">
+                            <span class="text-dark">
+                                <i class="bi bi-tag-fill me-1"></i>{{ producto.categoria_nombre }}
+                            </span>
+                        </td>
+                        <td class="text-center bg-soft-yellow">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('update_producto', id=producto.id) }}" class="btn btn-warning-gradient">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_producto', id=producto.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-danger-gradient" onclick="return confirm('¿Estás seguro de eliminar este producto?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Colores personalizados */
+    .bg-gradient-dark {
+        background: linear-gradient(135deg, #343a40 0%, #212529 100%) !important;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+    }
+    .bg-orange {
+        background-color: #fd7e14 !important;
+    }
+    .bg-soft-white {
+        background-color: #f8f9fa !important;
+    }
+    .bg-soft-blue {
+        background-color: #e7f1ff !important;
+    }
+    .bg-soft-purple {
+        background-color: #e2d9f3 !important;
+    }
+    .bg-soft-cyan {
+        background-color: #d1ecf1 !important;
+    }
+    .bg-soft-green {
+        background-color: #d4edda !important;
+    }
+    .bg-soft-pink {
+        background-color: #f8d7da !important;
+    }
+    .bg-soft-yellow {
+        background-color: #fff3cd !important;
+    }
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        border: none;
+        color: white;
+    }
+    .btn-warning-gradient {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        border: none;
+        color: black;
+    }
+    .btn-danger-gradient {
+        background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+        border: none;
+        color: white;
+    }
+    .text-gradient {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .table-bordered-rounded {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .table-bordered-rounded thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+    .table-bordered-rounded thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+    .badge {
+        font-weight: 600;
+        min-width: 60px;
+        transition: all 0.3s ease;
+    }
+    .badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .table-hover tbody tr:hover td {
+        filter: brightness(98%);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
 <script>
-    function openModal(id) {
-        document.getElementById(id).classList.add('is-active');
-    }
-    function closeModal(id) {
-        document.getElementById(id).classList.remove('is-active');
-    }
+    $(document).ready(function() {
+        $('#productosTable').DataTable({
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                search: '<i class="bi bi-search me-1"></i> Buscar:',
+                lengthMenu: '<i class="bi bi-list-ol me-1"></i> Mostrar _MENU_ registros',
+                info: '<i class="bi bi-info-circle me-1"></i> Mostrando _START_ a _END_ de _TOTAL_ productos',
+                infoEmpty: '<i class="bi bi-info-circle me-1"></i> No hay productos para mostrar',
+                infoFiltered: '<i class="bi bi-funnel me-1"></i> (filtrado de _MAX_ productos totales)',
+                paginate: {
+                    first: '<i class="bi bi-chevron-double-left"></i>',
+                    previous: '<i class="bi bi-chevron-left"></i>',
+                    next: '<i class="bi bi-chevron-right"></i>',
+                    last: '<i class="bi bi-chevron-double-right"></i>'
+                }
+            },
+            dom: '<"top"lf>rt<"bottom"ip>',
+            columnDefs: [
+                { orderable: false, targets: [7] }
+            ],
+            initComplete: function() {
+                $('.dataTables_length select').addClass('form-select form-select-sm');
+            }
+        });
+    });
 </script>
 {% endblock %}
