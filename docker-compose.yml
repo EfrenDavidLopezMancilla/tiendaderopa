@@ -22,12 +22,12 @@ services:
     environment:
       DATABASE_URL: postgresql://tiendaderopa_1i9t_user:JZh0A8ZrLKg2B71hwMo8gEbWim0qfrnb@db:5432/tiendaderopa_1i9t
       FLASK_ENV: development
-      PORT: 5003
+      PORT: 5004
     ports:
-      - "5003:5003"
+      - "5004:5004"
     volumes:
       - .:/app
-    command: flask run --host=0.0.0.0 --port 5003
+    command: flask run --host=0.0.0.0 --port 5004
 
 volumes:
   postgres_data:
