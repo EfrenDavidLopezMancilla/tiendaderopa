@@ -25,3 +25,4 @@ jobs:
           TAG_NAME="${{ github.event.pull_request.title }}"
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
+
