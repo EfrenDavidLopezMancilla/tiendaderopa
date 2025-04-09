@@ -3,20 +3,19 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Administrar Categorías</h2>
-    <a href="{{ url_for('agregar_categoria') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Agregar Categoría
+    <h2>Listado de Categorías</h2>
+    <a href="{{ url_for('crear_categoria') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Categoría
     </a>
 </div>
 
-<div class="card">
+<div class="card shadow mb-4">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead class="table-light">
                     <tr>
                         <th>Nombre</th>
-                        <th>Productos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -25,21 +24,12 @@
                     <tr>
                         <td>{{ categoria.nombre }}</td>
                         <td>
-                            <span class="badge bg-primary rounded-pill">
-                                {{ categoria.productos|length }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="{{ url_for('actualizar_categoria', id=categoria.id) }}" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil-square"></i> Editar
-                                </a>
-                                <a href="{{ url_for('eliminar_categoria', id=categoria.id) }}" 
-                                   class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </a>
-                            </div>
+                            <a href="{{ url_for('editar_categoria', id=categoria.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{{ url_for('eliminar_categoria', id=categoria.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -48,4 +38,16 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+        });
+    });
+</script>
 {% endblock %}

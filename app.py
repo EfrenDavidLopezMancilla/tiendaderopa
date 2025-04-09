@@ -1,112 +1,135 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from dataclasses import dataclass
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tienda.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'tu_clave_secreta_aqui'  # Necesario para flash messages
-
+app.secret_key = 'clave_secreta_para_mensajes_flash'
 db = SQLAlchemy(app)
 
 # Modelos
-class Categoria(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False)
-    productos = db.relationship('Producto', backref='categoria', lazy=True)
-
-    def __repr__(self):
-        return f'<Categoria {self.nombre}>'
-
 class Producto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    descripcion = db.Column(db.Text)
+    descripcion = db.Column(db.String(200), nullable=False)
     precio = db.Column(db.Float, nullable=False)
-    talla = db.Column(db.String(20))
-    color = db.Column(db.String(50))
+    talla = db.Column(db.String(10), nullable=True)
+    color = db.Column(db.String(20), nullable=True)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=False)
 
-    def __repr__(self):
-        return f'<Producto {self.nombre}>'
+class Categoria(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50), nullable=False)
+    productos = db.relationship('Producto', backref='categoria', lazy=True)
 
-# Rutas CRUD
+# Rutas principales
 @app.route('/')
 def index():
-    productos = Producto.query.join(Categoria).add_columns(
-        Producto.id,
-        Producto.nombre,
-        Producto.descripcion,
-        Producto.precio,
-        Producto.talla,
-        Producto.color,
-        Categoria.nombre.label('categoria_nombre')
-    ).all()
-    return render_template('index.html', productos=productos)
+    return render_template('home.html')
 
-@app.route('/productos/new', methods=['GET', 'POST'])
-def create_producto():
-    if request.method == 'POST':
-        try:
-            nuevo_producto = Producto(
-                nombre=request.form['nombre'],
-                descripcion=request.form['descripcion'],
-                precio=float(request.form['precio']),
-                talla=request.form['talla'],
-                color=request.form['color'],
-                categoria_id=int(request.form['categoria_id'])
-            )
-            db.session.add(nuevo_producto)
-            db.session.commit()
-            flash('Producto creado exitosamente!', 'success')
-            return redirect(url_for('index'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error al crear producto: {str(e)}', 'danger')
-    
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+# Rutas para productos
+@app.route('/productos')
+def listar_productos():
+    productos = Producto.query.all()
     categorias = Categoria.query.all()
-    return render_template('create_producto.html', categorias=categorias)
+    return render_template('productos.html', productos=productos, categorias=categorias)
 
-@app.route('/productos/<int:id>/edit', methods=['GET', 'POST'])
-def update_producto(id):
-    producto = Producto.query.get_or_404(id)
+@app.route('/producto/nuevo', methods=['GET', 'POST'])
+def crear_producto():
     if request.method == 'POST':
-        try:
-            producto.nombre = request.form['nombre']
-            producto.descripcion = request.form['descripcion']
-            producto.precio = float(request.form['precio'])
-            producto.talla = request.form['talla']
-            producto.color = request.form['color']
-            producto.categoria_id = int(request.form['categoria_id'])
-            db.session.commit()
-            flash('Producto actualizado exitosamente!', 'success')
-            return redirect(url_for('index'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error al actualizar producto: {str(e)}', 'danger')
-    
-    categorias = Categoria.query.all()
-    return render_template('update_producto.html', producto=producto, categorias=categorias)
-
-@app.route('/productos/<int:id>/delete', methods=['POST'])
-def delete_producto(id):
-    producto = Producto.query.get_or_404(id)
-    try:
-        db.session.delete(producto)
+        nuevo_producto = Producto(
+            nombre=request.form['nombre'],
+            descripcion=request.form['descripcion'],
+            precio=float(request.form['precio']),
+            talla=request.form.get('talla'),
+            color=request.form.get('color'),
+            categoria_id=int(request.form['categoria_id'])
+        )
+        db.session.add(nuevo_producto)
         db.session.commit()
-        flash('Producto eliminado exitosamente!', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error al eliminar producto: {str(e)}', 'danger')
-    return redirect(url_for('index'))
+        flash('Producto creado exitosamente', 'success')
+        return redirect(url_for('listar_productos'))
+    
+    categorias = Categoria.query.all()
+    return render_template('crear_producto.html', categorias=categorias)
+
+@app.route('/producto/editar/<int:id>', methods=['GET','POST'])
+def editar_producto(id):
+    producto = Producto.query.get_or_404(id)
+    if request.method == 'POST':
+        producto.nombre = request.form['nombre']
+        producto.descripcion = request.form['descripcion']
+        producto.precio = float(request.form['precio'])
+        producto.talla = request.form.get('talla')
+        producto.color = request.form.get('color')
+        producto.categoria_id = request.form.get('categoria_id')
+        db.session.commit()
+        flash('Producto actualizado exitosamente', 'success')
+        return redirect(url_for('listar_productos'))
+    
+    categorias = Categoria.query.all()
+    return render_template('editar_producto.html', producto=producto, categorias=categorias)
+
+@app.route('/producto/eliminar/<int:id>')
+def eliminar_producto(id):
+    producto = Producto.query.get_or_404(id)
+    db.session.delete(producto)
+    db.session.commit()
+    flash('Producto eliminado exitosamente', 'success')
+    return redirect(url_for('listar_productos'))
+
+# Rutas para categorías
+@app.route('/categorias')
+def listar_categorias():
+    categorias = Categoria.query.all()
+    return render_template('categorias.html', categorias=categorias)
+
+@app.route('/categoria/nueva', methods=['GET', 'POST'])
+def crear_categoria():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        if Categoria.query.filter_by(nombre=nombre).first():
+            flash('Esta categoría ya existe', 'error')
+        else:
+            nueva_categoria = Categoria(nombre=nombre)
+            db.session.add(nueva_categoria)
+            db.session.commit()
+            flash('Categoría creada exitosamente', 'success')
+            return redirect(url_for('listar_categorias'))
+    
+    return render_template('crear_categoria.html')
+
+@app.route('/categoria/editar/<int:id>', methods=['GET', 'POST'])
+def editar_categoria(id):
+    categoria = Categoria.query.get_or_404(id)
+    if request.method == 'POST':
+        nuevo_nombre = request.form['nombre']
+        if Categoria.query.filter(Categoria.id != id, Categoria.nombre == nuevo_nombre).first():
+            flash('Ya existe otra categoría con ese nombre', 'error')
+        else:
+            categoria.nombre = nuevo_nombre
+            db.session.commit()
+            flash('Categoría actualizada exitosamente', 'success')
+            return redirect(url_for('listar_categorias'))
+    
+    return render_template('editar_categoria.html', categoria=categoria)
+
+@app.route('/categoria/eliminar/<int:id>')
+def eliminar_categoria(id):
+    categoria = Categoria.query.get_or_404(id)
+    if categoria.productos:
+        flash('No se puede eliminar la categoría porque tiene productos asociados', 'error')
+    else:
+        db.session.delete(categoria)
+        db.session.commit()
+        flash('Categoría eliminada exitosamente', 'success')
+    return redirect(url_for('listar_categorias'))
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Crear categorías iniciales si no existen
-        if not Categoria.query.first():
-            categorias_iniciales = ['Camisetas', 'Pantalones', 'Accesorios', 'Zapatos', 'Ropa Interior']
-            for nombre in categorias_iniciales:
-                db.session.add(Categoria(nombre=nombre))
-            db.session.commit()
     app.run(debug=True)

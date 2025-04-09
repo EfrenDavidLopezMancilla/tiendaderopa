@@ -3,45 +3,57 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Nuestros Productos</h2>
-    <a href="{{ url_for('agregar_producto') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Agregar Producto
+    <h2>Listado de Productos</h2>
+    <a href="{{ url_for('crear_producto') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo Producto
     </a>
 </div>
 
-<div class="row g-4">
-    {% for producto in productos %}
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-img-top bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                <i class="bi bi-image fs-1 text-muted"></i>
-            </div>
-            <div class="card-body">
-                <span class="badge bg-primary mb-2">{{ producto.categoria.nombre }}</span>
-                <h5 class="card-title">{{ producto.nombre }}</h5>
-                <p class="card-text text-muted">{{ producto.descripcion }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">${{ "%.2f"|format(producto.precio) }}</h6>
-                    <div>
-                        <span class="badge bg-light text-dark me-1">{{ producto.talla }}</span>
-                        <span class="badge bg-light text-dark">{{ producto.color }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer bg-white border-0">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="{{ url_for('actualizar_producto', id=producto.id) }}" 
-                       class="btn btn-sm btn-outline-primary me-md-2">
-                        <i class="bi bi-pencil-square"></i> Editar
-                    </a>
-                    <a href="{{ url_for('eliminar_producto', id=producto.id) }}" 
-                       class="btn btn-sm btn-outline-danger">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </a>
-                </div>
-            </div>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.descripcion }}</td>
+                        <td>${{ producto.precio }}</td>
+                        <td>{{ producto.categoria.nombre }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{{ url_for('eliminar_producto', id=producto.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-    {% endfor %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+        });
+    });
+</script>
 {% endblock %}
