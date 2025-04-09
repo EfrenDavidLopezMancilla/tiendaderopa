@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5004
+EXPOSE 5003
 
-CMD ["gunicorn", "-b", "0.0.0.0:5004", "run:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5003", "run:app"]
