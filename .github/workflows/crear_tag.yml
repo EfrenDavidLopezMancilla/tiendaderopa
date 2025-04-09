@@ -1,3 +1,15 @@
+name: Tag on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: write
+
 jobs:
   tag_on_merge:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
@@ -6,19 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Git
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
       - name: Create and push tag
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_EFREN }}
         run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          DATE=$(date +'%Y%m%d%H%M%S')
-          TAG_NAME="pr-${PR_NUMBER}-${DATE}"
-
-          echo "Creating tag: $TAG_NAME"
-          git tag "$TAG_NAME"
-          git push origin "$TAG_NAME"
+          TAG_NAME="v1.0.1"
+          git tag "v1.0.1"
+          git push origin "v1.0.1"
