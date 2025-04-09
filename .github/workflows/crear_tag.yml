@@ -22,7 +22,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_EFREN }}
         run: |
-          TAG_NAME="${{ github.event.pull_request.title }}"
+          # Crear un nombre de tag seguro: pr-<numero>-<fecha>
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          DATE=$(date +'%Y%m%d%H%M%S')
+          TAG_NAME="pr-${PR_NUMBER}-${DATE}"
+
+          # Crear y subir el tag
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
 
