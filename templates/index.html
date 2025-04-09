@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %} Tienda de Ropa {% endblock %}
+{% block content %}
+<div class="columns">
+    <div class="column is-offset-3 is-6">
+        <a href="{{ url_for('add_product') }}" class="button is-success">
+            <i class="fa-solid fa-plus"></i> &nbsp; Agregar Producto
+        </a>
+        <br><br>
+
+        {% for producto in productos %}
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <p class="title is-4">{{ producto.nombre }}</p>
+                        <p class="subtitle is-5">{{ producto.categoria.nombre }}</p>
+                    </div>
+                </div>
+                <div class="content">
+                    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                    <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                    <p><strong>Talla:</strong> {{ producto.talla }}</p>
+                    <p><strong>Color:</strong> {{ producto.color }}</p>
+                </div>
+
+                <!-- Botones -->
+                <div class="buttons is-right mt-3">
+                    <a href="{{ url_for('update_product', id=producto.id) }}" class="button is-small is-link is-outlined">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <button class="button is-small is-danger is-outlined" onclick="openModal('modal-{{ producto.id }}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal mejorado -->
+        <div class="modal" id="modal-{{ producto.id }}">
+            <div class="modal-background" onclick="closeModal('modal-{{ producto.id }}')"></div>
+            <div class="modal-card">
+                <header class="modal-card-head has-background-danger">
+                    <p class="modal-card-title has-text-white">Confirmar eliminación</p>
+                    <button class="delete" aria-label="close" onclick="closeModal('modal-{{ producto.id }}')"></button>
+                </header>
+                <section class="modal-card-body">
+                    <p>¿Estás seguro de que deseas eliminar el producto <strong>{{ producto.nombre }}</strong>?</p>
+                    
+                    {% if producto.imagen %}
+                    <figure class="image is-128x128 mt-3">
+                        <img src="{{ producto.imagen }}" alt="Imagen de {{ producto.nombre }}">
+                    </figure>
+                    {% endif %}
+                </section>
+                <footer class="modal-card-foot is-justify-content-flex-end">
+                    <button class="button" onclick="closeModal('modal-{{ producto.id }}')">Cancelar</button>
+                    <a href="{{ url_for('delete_product', id=producto.id) }}" class="button is-danger">Eliminar</a>
+                </footer>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Script para manejar los modales -->
+<script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('is-active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('is-active');
+    }
+</script>
+{% endblock %}
