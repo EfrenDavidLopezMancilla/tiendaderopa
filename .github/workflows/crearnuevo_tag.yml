@@ -1,0 +1,16 @@
+name: Mi Workflow Personalizado
+
+on:
+  push:
+    branches:
+      - main
+      - agregar-productos
+      - hotfix/19590341/1/editar
+      - hotfix/19590341/2/eliminar
+      - hotfix/19590341/3/guardar
+    tags:
+      - 'hotfix/19590341/1/editar'
+      - 'EfrenDavidLopezMancilla-patch-1'
+      - 'hotfix/19590341/2/eliminar'
+      - 'agregar-productos'
+      - 'hotfix/19590341/3/guardar'
