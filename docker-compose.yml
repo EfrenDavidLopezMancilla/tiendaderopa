@@ -6,9 +6,9 @@ services:
     container_name: tienda_ropa_db
     restart: always
     environment:
-      POSTGRES_USER: tiendaderopa_1i9t_user
-      POSTGRES_PASSWORD: JZh0A8ZrLKg2B71hwMo8gEbWim0qfrnb
-      POSTGRES_DB: tiendaderopa_1i9t
+      POSTGRES_USER: tiendaderopa_0qmi_user
+      POSTGRES_PASSWORD: uHwjed0A3URri4b1CGigVz13B3UMHj8d
+      POSTGRES_DB: tiendaderopa_0qmi
     ports:
       - "5432:5432"
     volumes:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql://tiendaderopa_1i9t_user:JZh0A8ZrLKg2B71hwMo8gEbWim0qfrnb@db:5432/tiendaderopa_1i9t
+      DATABASE_URL: postgresql://tiendaderopa_0qmi_user:uHwjed0A3URri4b1CGigVz13B3UMHj8d@db:5432/tiendaderopa_0qmi
       FLASK_ENV: development
       PORT: 5003
     ports:
