@@ -129,15 +129,8 @@ def eliminar_categoria(id):
         flash('Categoría eliminada exitosamente', 'success')
     return redirect(url_for('listar_categorias'))
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
-    # Crear la base de datos y las tablas si no existen
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Crear categorías iniciales
-        if not Categoria.query.first():
-            categorias_iniciales = ['Ropa', 'Calzado', 'Accesorios']
-            for nombre in categorias_iniciales:
-                nueva_categoria = Categoria(nombre=nombre)
-                db.session.add(nueva_categoria)
-            db.session.commit()
+    app.run(debug=True)
+    
